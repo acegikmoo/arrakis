@@ -7,7 +7,7 @@ use anchor_lang::prelude::*;
 
 use contexts::*;
 
-declare_id!("FWQDYtsqrwKPc8hHLntfz7xavQbvuK2FNH7VtrbDeF5T");
+declare_id!("5KLAq27jKK24wy6qvjqAEghd6T8rDfx4DCPwP4kKJtew");
 
 #[program]
 pub mod arrakis {

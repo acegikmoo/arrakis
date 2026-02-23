@@ -1,16 +1,24 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { Arrakis } from "../target/types/arrakis";
+import { autoDiscover, createClient } from "@solana/client";
 
-describe("arrakis", () => {
-  // Configure the client to use the local cluster.
-  anchor.setProvider(anchor.AnchorProvider.env());
+const client = createClient({
+  cluster: "devnet",
+  walletConnectors: autoDiscover(),
+});
 
-  const program = anchor.workspace.arrakis as Program<Arrakis>;
+// Connect a wallet
+const connectors = client.connectors.all;
+await client.actions.connectWallet(connectors[0].id);
 
-  it("Is initialized!", async () => {
-    // Add your test here.
-    const tx = await program.methods.initialize().rpc();
-    console.log("Your transaction signature", tx);
-  });
+// Fetch balance
+const wallet = client.store.getState().wallet;
+if (wallet.status === "connected") {
+  const balance = await client.actions.fetchBalance(wallet.session.account.address);
+  console.log(`Balance: ${balance.toString()} lamports`);
+}
+
+// Send SOL
+const signature = await client.solTransfer.sendTransfer({
+  amount: 100_000_000n, // 0.1 SOL
+  authority: wallet.session,
+  destination: "Fg6PaFpoGXkYsidMpWFKfwtz6DhFVyG4dL1x8kj7ZJup",
 });
